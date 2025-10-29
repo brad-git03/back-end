@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-8--j(few&xc!igbz7o=5dz4@w8-b-#^dskmh$9=v9x!hamhm_u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '127.0.0.1:8000', '192.168.30.111:8000', 'https://192.168.30.111:8081', '192.168.30.111', 'https://peitel-backend-i58l.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', '127.0.0.1:8000', '192.168.30.111:8000', 'https://192.168.30.111:8081', '192.168.30.111', 'https://peitel-backend-i58l.onrender.com' , 'peitel-backend-i58l.onrender.com']
 
 
 # Application definition
@@ -55,9 +55,7 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://peitelbackend.onrender.com",
-]
+
 
 ROOT_URLCONF = 'MyBackend.urls'
 
@@ -130,3 +128,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://peitel-backend-i58l.onrender.com",
+]
