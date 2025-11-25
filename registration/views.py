@@ -2,13 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
 
-# Create your views here.
+
 from .models import UserRegistration
 from .serializer import RegistrationSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.urls import reverse
 
 @api_view(['POST'])
 def register_user(request):
@@ -24,7 +23,7 @@ def list_users(request):
     serializer = RegistrationSerializer(users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-# READ / UPDATE / DELETE by ID
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def user_detail(request, pk):
     try:
@@ -109,4 +108,107 @@ def users_html(request):
     return render(request, 'registration/users_list.html', {
         'users': users,
         'current_user': request.session.get('user_name')
+    })
+
+# ---------- CREATE USER ----------
+@login_required_view
+def user_create_html(request):
+    if request.method == 'POST':
+   
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        gender = request.POST.get('gender', '').strip()
+        profile_picture = request.FILES.get('profile_picture') 
+
+    
+        if not first_name or not last_name or not email or not password:
+            messages.error(request, "First name, last name, email and password are required.")
+            return render(request, 'registration/user_form.html', {
+                'title': 'Add User',
+                'user': None,  
+            })
+
+      
+        user = UserRegistration(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=password,   
+            gender=gender,
+        )
+
+        if profile_picture:
+            user.profile_picture = profile_picture
+
+        user.save()
+
+        messages.success(request, "User created successfully.")
+        return redirect('registration:users_html')
+
+
+    return render(request, 'registration/user_form.html', {
+        'title': 'Add User',
+        'user': None,
+    })
+
+# ---------- UPDATE USER ----------
+@login_required_view
+def user_update_html(request, pk):
+    user = get_object_or_404(UserRegistration, pk=pk)
+
+    if request.method == 'POST':
+     
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        gender = request.POST.get('gender', '').strip()
+        profile_picture = request.FILES.get('profile_picture')
+
+  
+        if not first_name or not last_name or not email:
+            messages.error(request, "First name, last name and email are required.")
+            return render(request, 'registration/user_form.html', {
+                'title': 'Edit User',
+                'user': user,
+            })
+
+
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.gender = gender
+
+   
+        if password:
+            user.password = password
+
+        if profile_picture:
+            user.profile_picture = profile_picture
+
+        user.save()
+
+        messages.success(request, "User updated successfully.")
+        return redirect('registration:users_html')
+
+
+    return render(request, 'registration/user_form.html', {
+        'title': 'Edit User',
+        'user': user,
+    })
+
+# ---------- DELETE USER ----------
+@login_required_view
+def user_delete_html(request, pk):
+    user = get_object_or_404(UserRegistration, pk=pk)
+
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "User deleted successfully.")
+        return redirect('registration:users_html')
+
+    return render(request, 'registration/user_confirm_delete.html', {
+        'user': user
     })

@@ -8,5 +8,13 @@ class UserRegistration(models.Model):
     gender = models.CharField(max_length=12)
     password = models.CharField(max_length=150)
 
+    profile_picture = models.ImageField(
+    upload_to='profile_pictures/', 
+    null=True,
+    blank=True
+    )
+    
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
